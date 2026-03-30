@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Theoria Division — Directive Schema",
+  "description": "Standard directive format written by Hermes, approved by Arbiter, addressed to Operations agents.",
+  "type": "object",
+  "required": ["directive_id", "target_agent", "issued_by", "approved_by", "timestamp", "priority", "type", "instruction_summary"],
+  "properties": {
+    "directive_id": {
+      "type": "string",
+      "description": "Unique directive ID. Format: DIR-YYYY-MM-DD-<n>. Example: DIR-2026-03-29-1."
+    },
+    "target_agent": {
+      "type": "string",
+      "enum": ["argus", "calliope", "clio"],
+      "description": "The Operations agent this directive is addressed to."
+    },
+    "issued_by": {
+      "type": "string",
+      "enum": ["hermes"],
+      "description": "Always Hermes. Hermes is the only agent that writes directives."
+    },
+    "approved_by": {
+      "type": "string",
+      "enum": ["arbiter"],
+      "description": "Always Arbiter. No directive is valid without Arbiter approval."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of directive issuance."
+    },
+    "cycle": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}_C\\d+$",
+      "description": "The cycle this directive takes effect from."
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["HIGH", "STANDARD"],
+      "description": "HIGH = agent must apply before next run. STANDARD = apply at next natural cycle."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["prompt_optimization", "behavior_correction", "scope_change"],
+      "description": "prompt_optimization = refine how agent reasons/outputs. behavior_correction = fix a specific failure. scope_change = alter what agent is responsible for."
+    },
+    "instruction_summary": {
+      "type": "string",
+      "description": "One-sentence summary of the directive. Used for logging and Citadel display."
+    }
+  },
+  "additionalProperties": false
+}

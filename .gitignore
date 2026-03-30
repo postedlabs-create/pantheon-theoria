@@ -1,0 +1,25 @@
+# Sensitive identity files — Railway Persistent Volume only
+SOUL.md
+IDENTITY.md
+USER.md
+
+# Sensitive vault files — Railway Persistent Volume only
+vault/06_system/LUCIAN/
+vault/06_system/OPERATORS/
+
+# Dynamic memory content — folder structure tracked, content excluded
+memory/**
+!memory/**/.gitkeep
+
+# Live report files — not version controlled (Google Drive)
+argus/reports/*.md
+!argus/reports/README.md
+
+calliope/reports/*.md
+!calliope/reports/README.md
+
+# Backup and system files
+*.bak
+.openclaw/
+*.log
+.DS_Store

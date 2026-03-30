@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Theoria Division — Agent Report Schema",
+  "description": "Standard report payload schema for all Theoria Operations agents. Enforced by Archon coordination skill.",
+  "type": "object",
+  "required": ["agent", "report_type", "timestamp", "cycle", "status", "payload"],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "enum": ["argus", "calliope", "clio", "athena"],
+      "description": "ID of the agent producing this report."
+    },
+    "report_type": {
+      "type": "string",
+      "enum": ["intel-report", "outreach-report", "content-report", "synthesis", "situation-brief", "tuning-candidates"],
+      "description": "Type of report being filed."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of report creation."
+    },
+    "cycle": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}_C\\d+$",
+      "description": "Cycle identifier. Format: YYYY-MM-DD_C<n>. Example: 2026-03-29_C1."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["COMPLETE", "PARTIAL", "FLAGGED"],
+      "description": "COMPLETE = full run. PARTIAL = missing expected output. FLAGGED = requires command attention."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Agent-specific data. Structure varies by agent and report_type. See SKILL.md sections 4a–4c."
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,53 +1,109 @@
 #!/bin/bash
 # Pantheon Theoria — Bootstrap Script
 # Runs on every Railway boot via server.js bootstrap hook
-# Syncs scaffold from GitHub into /data/workspace
-# Sensitive files on Railway Persistent Volume are NOT touched
-
+# Syncs scaffold from GitHub, sets up multi-agent workspaces, patches gateway
 set -e
 
 WORKSPACE="/data/workspace"
 TMP_DIR="/tmp/pantheon-scaffold"
 TOKEN="${GITHUB_TOKEN:-}"
 REPO="postedlabs-create/pantheon-theoria"
+SHARED_VAULT="/data/shared-vault"
+SHARED_MEMORY="/data/shared-memory"
+STATE_DIR="/data/.openclaw"
+AUTH_SRC="$STATE_DIR/agents/main/agent/auth-profiles.json"
 
+DIVISION_AGENTS="arbiter athena hermes argus calliope"
+ALL_AGENTS="lucian $DIVISION_AGENTS"
+
+# ─── Step 1: Pull scaffold from GitHub ────────────────────────────
 if [ -z "$TOKEN" ]; then
   echo "[bootstrap] GITHUB_TOKEN not set — skipping scaffold sync"
-  exit 0
+else
+  REPO_URL="https://x-access-token:${TOKEN}@github.com/${REPO}.git"
+  echo "[bootstrap] Pulling scaffold from GitHub..."
+  rm -rf "$TMP_DIR"
+  git clone --depth 1 "$REPO_URL" "$TMP_DIR"
+  rm -rf "$TMP_DIR/.git"
+
+  # Remove sensitive files from clone — they live on persistent volume only
+  rm -f "$TMP_DIR/SOUL.md" "$TMP_DIR/IDENTITY.md" "$TMP_DIR/USER.md"
+  rm -rf "$TMP_DIR/vault/06_system/LUCIAN"
+  rm -rf "$TMP_DIR/vault/06_system/OPERATORS"
+  rm -rf "$TMP_DIR/memory"
+
+  # Copy scaffold into main workspace (backward compat)
+  cp -r "$TMP_DIR"/. "$WORKSPACE/"
+
+  echo "[bootstrap] Scaffold sync complete."
 fi
 
-REPO_URL="https://x-access-token:${TOKEN}@github.com/${REPO}.git"
+# ─── Step 2: Shared vault ────────────────────────────────────────
+echo "[bootstrap] Setting up shared vault..."
+mkdir -p "$SHARED_VAULT/06_system" "$SHARED_MEMORY"
 
-echo "[bootstrap] Starting scaffold sync from GitHub..."
+for DIR in STANDARDS WORLD PROJECTS OPERATORS; do
+  if [ -d "$WORKSPACE/vault/06_system/$DIR" ] && [ ! -L "$WORKSPACE/vault/06_system/$DIR" ]; then
+    rm -rf "$SHARED_VAULT/06_system/$DIR"
+    cp -r "$WORKSPACE/vault/06_system/$DIR" "$SHARED_VAULT/06_system/$DIR"
+  fi
+done
 
-# Clone repo to temp location
-rm -rf "$TMP_DIR"
-git clone --depth 1 "$REPO_URL" "$TMP_DIR"
+# ─── Step 3: Agent workspaces ────────────────────────────────────
+for AGENT in $ALL_AGENTS; do
+  WS="/data/workspace-${AGENT}"
+  mkdir -p "$WS/vault/06_system" "$WS/memory" "$WS/scripts"
 
-# Remove .git from clone — we don't need repo metadata in workspace
-rm -rf "$TMP_DIR/.git"
+  # Symlink shared vault
+  for DIR in STANDARDS WORLD PROJECTS OPERATORS; do
+    if [ -d "$SHARED_VAULT/06_system/$DIR" ]; then
+      rm -rf "$WS/vault/06_system/$DIR"
+      ln -sf "$SHARED_VAULT/06_system/$DIR" "$WS/vault/06_system/$DIR"
+    fi
+  done
 
-# Remove sensitive file paths from the clone so they can never overwrite
-# what's already on the persistent volume
-rm -f "$TMP_DIR/SOUL.md" "$TMP_DIR/IDENTITY.md" "$TMP_DIR/USER.md"
-rm -rf "$TMP_DIR/vault/06_system/LUCIAN"
-rm -rf "$TMP_DIR/vault/06_system/OPERATORS"
-rm -rf "$TMP_DIR/memory"
+  # Shared division memory (all agents can read/write)
+  [ ! -L "$WS/division-memory" ] && ln -sf "$SHARED_MEMORY" "$WS/division-memory"
 
-# Copy scaffold into workspace — overwrites scaffold files with latest from GitHub
-# Sensitive files were removed above so they're never touched
-cp -r "$TMP_DIR"/. "$WORKSPACE/"
+  # Copy agent-specific scaffold files (if they exist in main workspace)
+  if [ -d "$WORKSPACE/$AGENT" ] && [ "$AGENT" != "lucian" ]; then
+    cp -r "$WORKSPACE/$AGENT"/. "$WS/" 2>/dev/null || true
+  fi
 
-# Cleanup
-rm -rf "$TMP_DIR"
+  # Shared scaffold files every agent needs
+  for f in BOOTSTRAP.md HEARTBEAT.md TOOLS.md; do
+    [ -f "$WORKSPACE/$f" ] && cp "$WORKSPACE/$f" "$WS/$f"
+  done
 
-# Fix server.js gateway token injection bug (survives until upstream fix)
-# The wrapper only injects Bearer token when no Authorization header exists,
-# but Basic auth from SETUP_PASSWORD is always present — so the token never gets injected
+  # Auth profile
+  AGENT_STATE="$STATE_DIR/agents/${AGENT}/agent"
+  AGENT_SESSIONS="$STATE_DIR/agents/${AGENT}/sessions"
+  mkdir -p "$AGENT_STATE" "$AGENT_SESSIONS"
+  [ -f "$AUTH_SRC" ] && cp "$AUTH_SRC" "$AGENT_STATE/auth-profiles.json"
+done
+
+# ─── Step 4: Lucian-specific files ───────────────────────────────
+LWS="/data/workspace-lucian"
+# Lucian's private identity (already on persistent volume)
+for f in SOUL.md IDENTITY.md USER.md AGENTS.md MEMORY.md; do
+  [ -f "$WORKSPACE/$f" ] && [ ! -f "$LWS/$f" ] && cp "$WORKSPACE/$f" "$LWS/$f"
+done
+# Lucian's private vault
+if [ -d "$WORKSPACE/vault/06_system/LUCIAN" ]; then
+  mkdir -p "$LWS/vault/06_system/LUCIAN"
+  cp -r "$WORKSPACE/vault/06_system/LUCIAN"/. "$LWS/vault/06_system/LUCIAN/"
+fi
+# Lucian's private memory
+if [ -d "$WORKSPACE/memory" ]; then
+  cp -r "$WORKSPACE/memory"/. "$LWS/memory/" 2>/dev/null || true
+fi
+
+# ─── Step 5: Patch gateway token injection bug ───────────────────
 SERVER_JS="/app/src/server.js"
 if grep -q 'if (!req?.headers?.authorization && OPENCLAW_GATEWAY_TOKEN)' "$SERVER_JS" 2>/dev/null; then
   sed -i 's/if (!req?.headers?.authorization && OPENCLAW_GATEWAY_TOKEN)/if (OPENCLAW_GATEWAY_TOKEN)/' "$SERVER_JS"
   echo "[bootstrap] Patched gateway token injection in server.js"
 fi
 
-echo "[bootstrap] Scaffold sync complete."
+echo "[bootstrap] All agent workspaces ready."
+echo "[bootstrap] Done."

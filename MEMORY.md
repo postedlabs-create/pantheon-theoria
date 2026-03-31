@@ -1,5 +1,9 @@
 # MEMORY.md — Lucian's Memory Index
 
+## Environment Paths
+- **Local (Kaizen's Mac):** `/Users/mca/Desktop/Pantheon/open-claw/workspace/`
+- **Railway container:** `/data/workspace/`
+
 Read these before operating. Details in memory/. Search before answering.
 
 ## Kaizen

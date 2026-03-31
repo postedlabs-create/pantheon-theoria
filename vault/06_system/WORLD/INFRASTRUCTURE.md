@@ -7,9 +7,11 @@
 ## OpenClaw
 
 - **Version:** OpenClaw 2026.3.28
-- **Host:** Kaizen's MacBook Pro (primary)
-- **Workspace root:** `/Users/mca/Desktop/Pantheon/open-claw/workspace`
-- **OpenClaw state dir:** `/Users/mca/Desktop/Pantheon/open-claw/`
+- **Host (local):** Kaizen's MacBook Pro (primary)
+- **Workspace root (local):** `/Users/mca/Desktop/Pantheon/open-claw/workspace`
+- **OpenClaw state dir (local):** `/Users/mca/Desktop/Pantheon/open-claw/`
+- **Workspace root (Railway):** `/data/workspace/`
+- **Railway volume mount:** `/data/`
 
 ---
 

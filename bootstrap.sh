@@ -105,5 +105,16 @@ if grep -q 'if (!req?.headers?.authorization && OPENCLAW_GATEWAY_TOKEN)' "$SERVE
   echo "[bootstrap] Patched gateway token injection in server.js"
 fi
 
+# ─── Step 6: Inject agent-switcher into Control UI ───────────────
+CONTROL_UI="/openclaw/dist/control-ui"
+SWITCHER_SRC="/data/workspace/agent-switcher.js"
+if [ -f "$SWITCHER_SRC" ] && [ -d "$CONTROL_UI" ]; then
+  cp "$SWITCHER_SRC" "$CONTROL_UI/agent-switcher.js"
+  if ! grep -q 'agent-switcher.js' "$CONTROL_UI/index.html" 2>/dev/null; then
+    sed -i 's|</body>|<script src="./agent-switcher.js"></script></body>|' "$CONTROL_UI/index.html"
+  fi
+  echo "[bootstrap] Injected agent-switcher into Control UI"
+fi
+
 echo "[bootstrap] All agent workspaces ready."
 echo "[bootstrap] Done."

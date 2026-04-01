@@ -11,8 +11,6 @@ Communication is strictly layer-adjacent. No agent skips layers.
 ```
 Operators
     ↕
-Lucian (Kaizen only)
-    ↕
 Arbiter (Commander)
     ↕
 Athena / Hermes (Command Layer)
@@ -56,7 +54,6 @@ RRIL Layer
 - Hermes ↔ Operations: **Never direct**
 - Hermes ↔ RRIL: **Never direct**
 - RRIL agents ↔ Command: **Never direct**
-- Lucian ↔ Kaiaku: **Never** — Lucian serves Kaizen only
 - Any agent ↔ external parties (without authorization): **Never**
 
 ---
@@ -67,7 +64,6 @@ RRIL Layer
 |-------|-----------|-------|
 | Kaizen | Superadmin | Everything |
 | Kaiaku | Operator | Division operations |
-| Lucian | Admin | Serves Kaizen only |
 | Arbiter | Commander | All division agents |
 | Athena | Senior Agent | Synthesis and assessment only |
 | Hermes | Senior Agent | Agent optimization only |

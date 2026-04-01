@@ -13,8 +13,7 @@ SHARED_MEMORY="/data/shared-memory"
 STATE_DIR="/data/.openclaw"
 AUTH_SRC="$STATE_DIR/agents/main/agent/auth-profiles.json"
 
-DIVISION_AGENTS="arbiter athena hermes argus calliope"
-ALL_AGENTS="lucian $DIVISION_AGENTS"
+ALL_AGENTS="arbiter athena hermes argus calliope"
 
 # ─── Step 1: Pull scaffold from GitHub ────────────────────────────
 if [ -z "$TOKEN" ]; then
@@ -27,10 +26,7 @@ else
   rm -rf "$TMP_DIR/.git"
 
   # Remove sensitive files from clone — they live on persistent volume only
-  rm -f "$TMP_DIR/SOUL.md" "$TMP_DIR/IDENTITY.md" "$TMP_DIR/USER.md"
-  rm -rf "$TMP_DIR/vault/06_system/LUCIAN"
   rm -rf "$TMP_DIR/vault/06_system/OPERATORS"
-  rm -rf "$TMP_DIR/memory"
 
   # Copy scaffold into main workspace (backward compat)
   cp -r "$TMP_DIR"/. "$WORKSPACE/"
@@ -66,7 +62,7 @@ for AGENT in $ALL_AGENTS; do
   [ ! -L "$WS/division-memory" ] && ln -sf "$SHARED_MEMORY" "$WS/division-memory"
 
   # Copy agent-specific scaffold files (if they exist in main workspace)
-  if [ -d "$WORKSPACE/$AGENT" ] && [ "$AGENT" != "lucian" ]; then
+  if [ -d "$WORKSPACE/$AGENT" ]; then
     cp -r "$WORKSPACE/$AGENT"/. "$WS/" 2>/dev/null || true
   fi
 
@@ -82,30 +78,14 @@ for AGENT in $ALL_AGENTS; do
   [ -f "$AUTH_SRC" ] && cp "$AUTH_SRC" "$AGENT_STATE/auth-profiles.json"
 done
 
-# ─── Step 4: Lucian-specific files ───────────────────────────────
-LWS="/data/workspace-lucian"
-# Lucian's private identity (already on persistent volume)
-for f in SOUL.md IDENTITY.md USER.md AGENTS.md MEMORY.md; do
-  [ -f "$WORKSPACE/$f" ] && [ ! -f "$LWS/$f" ] && cp "$WORKSPACE/$f" "$LWS/$f"
-done
-# Lucian's private vault
-if [ -d "$WORKSPACE/vault/06_system/LUCIAN" ]; then
-  mkdir -p "$LWS/vault/06_system/LUCIAN"
-  cp -r "$WORKSPACE/vault/06_system/LUCIAN"/. "$LWS/vault/06_system/LUCIAN/"
-fi
-# Lucian's private memory
-if [ -d "$WORKSPACE/memory" ]; then
-  cp -r "$WORKSPACE/memory"/. "$LWS/memory/" 2>/dev/null || true
-fi
-
-# ─── Step 5: Patch gateway token injection bug ───────────────────
+# ─── Step 4: Patch gateway token injection bug ───────────────────
 SERVER_JS="/app/src/server.js"
 if grep -q 'if (!req?.headers?.authorization && OPENCLAW_GATEWAY_TOKEN)' "$SERVER_JS" 2>/dev/null; then
   sed -i 's/if (!req?.headers?.authorization && OPENCLAW_GATEWAY_TOKEN)/if (OPENCLAW_GATEWAY_TOKEN)/' "$SERVER_JS"
   echo "[bootstrap] Patched gateway token injection in server.js"
 fi
 
-# ─── Step 6: Inject agent-switcher into Control UI ───────────────
+# ─── Step 5: Inject agent-switcher into Control UI ───────────────
 CONTROL_UI="/openclaw/dist/control-ui"
 SWITCHER_SRC="/data/workspace/agent-switcher.js"
 if [ -f "$SWITCHER_SRC" ] && [ -d "$CONTROL_UI" ]; then

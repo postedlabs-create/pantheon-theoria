@@ -37,7 +37,6 @@ Instead, each agent's scaffold files contain **pointers** to vault files:
 
 The workspace root must contain only:
 - Core scaffold files: `SOUL.md`, `IDENTITY.md`, `MEMORY.md`, `AGENTS.md`, `BOOTSTRAP.md`, `HEARTBEAT.md`, `TOOLS.md`, `USER.md`
-- Lucian's scaffold files: `LUCIAN.md`, `KAIZEN.md`, `PANTHEON.md`, `MORNING_PROTOCOL.md`, `OPERATING_SYSTEM.md`, `PRIORITY_STACK.md`
 - `vault/` (structured reference, version-controlled)
 - `memory/` (live memory, folder structure only in git)
 - Agent subfolders (argus/, arbiter/, athena/, hermes/, calliope/, archon-mcp/)

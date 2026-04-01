@@ -9,8 +9,6 @@ OPERATORS
 ├── Kaizen (Superadmin — Primary)
 └── Kaiaku (Operator — Secondary)
 
-LUCIAN (Admin — Kaizen's personal agent — sits ABOVE division, serves Kaizen only)
-
 ARBITER (Commander — Division Head)
 
 COMMAND LAYER

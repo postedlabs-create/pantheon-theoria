@@ -1,6 +1,5 @@
 (function() {
   var AGENTS = [
-    { id: 'lucian', name: 'Lucian', emoji: '\u26A1' },
     { id: 'arbiter', name: 'Arbiter', emoji: '\u2696\uFE0F' },
     { id: 'athena', name: 'Athena', emoji: '\uD83E\uDD89' },
     { id: 'hermes', name: 'Hermes', emoji: '\uD83D\uDD27' },

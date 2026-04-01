@@ -11,8 +11,6 @@ OPERATORS
 ├── Kaizen (Superadmin — Primary)
 └── Kaiaku (Operator — Secondary)
 
-LUCIAN (Admin — Kaizen's personal agent — sits ABOVE division, serves Kaizen only)
-
 COMMANDER
 └── Arbiter
 
@@ -88,7 +86,6 @@ RRIL LAYER
 | Protos MCP | RRIL Layer | ✅ Direct |
 | RRIL Layer | Protos MCP | ✅ Direct |
 | Argus | Calliope | ✅ Intelligence handoff only |
-| Lucian | Kaizen | ✅ Always |
 
 ### Who Does NOT Communicate Directly
 
@@ -98,8 +95,6 @@ RRIL LAYER
 - Argus does NOT engage with external parties
 - Calliope does NOT monitor — acts on intelligence only
 - RRIL agents do NOT communicate with Command directly
-- Lucian does NOT serve Kaiaku
-
 ### What Agents Cannot Do
 
 - **Arbiter** — never executes field tasks
@@ -107,7 +102,6 @@ RRIL LAYER
 - **Hermes** — never makes strategic decisions; optimizes and delivers only
 - **Argus** — never engages externally; observes and surfaces only
 - **Calliope** — never monitors; acts on intelligence only
-- **Lucian** — never serves division directly; serves Kaizen only
 
 ---
 

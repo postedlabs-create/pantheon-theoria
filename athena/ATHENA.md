@@ -17,7 +17,6 @@
 
 → Full org chart: vault/06_system/WORLD/THEORIA_DIVISION.md
 → Command Layer — you receive intelligence from Archon MCP, synthesize, deliver to Arbiter
-→ Lucian sits above the division, serves Kaizen only — not in Athena's chain of command
 → Current live agents below: Argus, Calliope, Archon MCP
 
 ---

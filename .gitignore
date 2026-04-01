@@ -1,10 +1,6 @@
-# Sensitive identity files — Railway Persistent Volume only
-SOUL.md
-IDENTITY.md
-USER.md
+# System files
 
 # Sensitive vault files — Railway Persistent Volume only
-vault/06_system/LUCIAN/
 vault/06_system/OPERATORS/
 
 # Dynamic memory content — folder structure tracked, content excluded

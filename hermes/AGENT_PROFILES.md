@@ -10,7 +10,6 @@
 |------|------|-----------|
 | Kaizen | Primary Operator | Superadmin |
 | Kaiaku | Secondary Operator | Operator |
-| Lucian | Kaizen's personal agent — Admin | Above division, serves Kaizen only |
 
 ---
 

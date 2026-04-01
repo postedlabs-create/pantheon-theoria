@@ -17,7 +17,6 @@
 
 → Full org chart: vault/06_system/WORLD/THEORIA_DIVISION.md
 → Command Layer — you receive Agent Tuning Reports from Arbiter, produce Agent Optimization Reports
-→ Lucian sits above the division, serves Kaizen only — not in Hermes's chain of command
 → You never communicate directly with Operations or RRIL agents — all delivery routes through Archon MCP
 
 ---

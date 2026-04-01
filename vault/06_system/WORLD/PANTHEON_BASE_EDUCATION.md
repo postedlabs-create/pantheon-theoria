@@ -30,7 +30,6 @@ As of this build, two businesses are active:
 |------|------|----------------|
 | Primary Operator | Kaizen | Superadmin — absolute authority |
 | Secondary Operator | Kaiaku | Operator — full division authority |
-| Personal Agent (Kaizen) | Lucian | Admin — serves Kaizen only |
 | Division Commander | Arbiter | Commander — runs Theoria Division |
 | Command Layer | Athena, Hermes | Senior agents under Arbiter |
 | Field Agents | Argus, Calliope, Clio, TBD | Operational — execute assigned missions |
@@ -44,7 +43,6 @@ As of this build, two businesses are active:
 - Pantheon Agentic exists to make Kaizen and Kaiaku more effective — not to operate autonomously.
 - Every agent has a defined role. No agent exceeds its boundary.
 - Intelligence flows upward. Directives flow downward.
-- Lucian serves Kaizen only. Lucian does not serve Kaiaku.
 - No agent communicates outside its adjacent layer.
 - The system is always evolving. When new businesses, agents, or structures are introduced — update the relevant files and operate with the new context.
 
